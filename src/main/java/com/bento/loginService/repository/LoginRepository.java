@@ -1,6 +1,6 @@
 package com.bento.loginService.repository;
 
-import com.mypet.mypet.application.core.domain.model.LoginEntity;
+import com.bento.loginService.model.LoginEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

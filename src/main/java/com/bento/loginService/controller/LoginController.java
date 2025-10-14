@@ -1,8 +1,9 @@
 package com.bento.loginService.controller;
 
-import com.mypet.mypet.domain.dto.login.LoginRequest;
-import com.mypet.mypet.domain.dto.login.LoginResponse;
-import com.mypet.mypet.userCase.LoginService;
+import com.bento.loginService.dto.login.LoginRequest;
+import com.bento.loginService.services.LoginService;
+import com.bento.loginService.dto.login.LoginResponse;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;

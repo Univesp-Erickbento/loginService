@@ -1,7 +1,6 @@
 package com.bento.loginService.model;
 
-
-import com.mypet.mypet.domain.dto.login.LoginRequest;
+import com.bento.loginService.dto.login.LoginRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -1,9 +1,9 @@
 package com.bento.loginService.services;
 
-import com.mypet.mypet.adapters.out.repositories.LoginRepository;
-import com.mypet.mypet.application.core.domain.model.LoginEntity;
-import com.mypet.mypet.domain.dto.login.LoginRequest;
-import com.mypet.mypet.domain.dto.login.LoginResponse;
+import com.bento.loginService.dto.login.LoginRequest;
+import com.bento.loginService.model.LoginEntity;
+import com.bento.loginService.repository.LoginRepository;
+import com.bento.loginService.dto.login.LoginResponse;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
