@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.bento</groupId>
-	<artifactId>loginService</artifactId>
+	<artifactId>loginServiceImpl</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>loginService</name>
+	<name>loginServiceImpl</name>
 	<description>peça de login</description>
 	<url/>
 	<licenses>

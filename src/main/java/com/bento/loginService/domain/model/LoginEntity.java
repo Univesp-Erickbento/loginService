@@ -1,4 +1,4 @@
-package com.bento.loginService.model;
+package com.bento.loginService.domain.model;
 
 import com.bento.loginService.dto.login.LoginRequest;
 import jakarta.persistence.*;

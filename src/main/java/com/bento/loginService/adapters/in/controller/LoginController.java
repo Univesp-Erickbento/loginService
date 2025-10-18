@@ -1,7 +1,7 @@
-package com.bento.loginService.controller;
+package com.bento.loginService.adapters.in.controller;
 
+import com.bento.loginService.application.services.LoginServiceImpl;
 import com.bento.loginService.dto.login.LoginRequest;
-import com.bento.loginService.services.LoginService;
 import com.bento.loginService.dto.login.LoginResponse;
 
 import org.springframework.http.ResponseEntity;
@@ -13,17 +13,17 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = {"http://45.93.100.30:4200", "http://192.168.15.2:4200", "http://192.168.15.200:4200", "http://localhost:4200"})
 public class LoginController {
 
-    private final LoginService loginService;
+    private final LoginServiceImpl loginServiceImpl;
 
-    public LoginController(LoginService loginService) {
-        this.loginService = loginService;
+    public LoginController(LoginServiceImpl loginServiceImpl) {
+        this.loginServiceImpl = loginServiceImpl;
     }
 
     // Endpoint para criar um novo usuário
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody LoginRequest loginRequest) {
         try {
-            String response = loginService.register(loginRequest);
+            String response = loginServiceImpl.register(loginRequest);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());  // Mensagem de erro para caso de usuário já existente
@@ -36,7 +36,7 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         try {
-            LoginResponse response = loginService.login(loginRequest);
+            LoginResponse response = loginServiceImpl.login(loginRequest);
             return ResponseEntity.ok(response);
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(401).body(null);  // Unauthorized, credenciais erradas
@@ -49,7 +49,7 @@ public class LoginController {
     @PutMapping("/update/{username}")
     public ResponseEntity<String> updatePassword(@PathVariable String username, @RequestBody LoginRequest loginRequest) {
         try {
-            String response = loginService.updatePassword(username, loginRequest);
+            String response = loginServiceImpl.updatePassword(username, loginRequest);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());  // Usuário não encontrado
@@ -62,7 +62,7 @@ public class LoginController {
     @DeleteMapping("/delete/{username}")
     public ResponseEntity<String> deleteUser(@PathVariable String username) {
         try {
-            String response = loginService.deleteUser(username);
+            String response = loginServiceImpl.deleteUser(username);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());  // Usuário não encontrado
