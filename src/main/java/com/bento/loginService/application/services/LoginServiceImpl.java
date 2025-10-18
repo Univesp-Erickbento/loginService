@@ -2,7 +2,7 @@ package com.bento.loginService.application.services;
 
 import com.bento.loginService.dto.login.LoginRequest;
 import com.bento.loginService.domain.model.LoginEntity;
-import com.bento.loginService.adapters.out.repository.LoginRepositoryAdapter;
+import com.bento.loginService.adapters.out.repository.SpringDataLoginRepository;
 import com.bento.loginService.dto.login.LoginResponse;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,11 +18,11 @@ import java.util.Optional;
 public class LoginServiceImpl {
 
     private final JwtEncoder jwtEncoder;
-    private final LoginRepositoryAdapter userRepository;
+    private final SpringDataLoginRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     public LoginServiceImpl(JwtEncoder jwtEncoder,
-                            LoginRepositoryAdapter userRepository,
+                            SpringDataLoginRepository userRepository,
                             BCryptPasswordEncoder passwordEncoder) {
         this.jwtEncoder = jwtEncoder;
         this.userRepository = userRepository;
