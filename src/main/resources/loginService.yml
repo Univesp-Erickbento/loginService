@@ -1,0 +1,137 @@
+openapi: 3.0.1
+info:
+  title: Login Service API
+  description: API para autenticação, cadastro e gerenciamento de usuários
+  version: 1.0.0
+  contact:
+    name: Bento Dev Team
+    email: suporte@bento.com
+
+servers:
+  - url: http://localhost:9001/api
+    description: Servidor local
+
+paths:
+  /auth/register:
+    post:
+      summary: Cadastrar um novo usuário
+      operationId: registerUser
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Usuário registrado com sucesso
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: Erro de validação ou usuário já existente
+        '500':
+          description: Erro interno no servidor
+
+  /auth/login:
+    post:
+      summary: Autenticar um usuário
+      operationId: loginUser
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login bem-sucedido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Credenciais inválidas
+        '500':
+          description: Erro interno no servidor
+
+  /auth/update/{username}:
+    put:
+      summary: Atualizar senha do usuário
+      operationId: updatePassword
+      tags:
+        - Auth
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Senha atualizada com sucesso
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: Usuário não encontrado
+        '500':
+          description: Erro interno no servidor
+
+  /auth/delete/{username}:
+    delete:
+      summary: Excluir um usuário
+      operationId: deleteUser
+      tags:
+        - Auth
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usuário excluído com sucesso
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: Usuário não encontrado
+        '500':
+          description: Erro interno no servidor
+
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        nomeUsuario:
+          type: string
+          example: "joao"
+        senha:
+          type: string
+          example: "123456"
+
+    LoginResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        expiresIn:
+          type: integer
+          example: 3600
