@@ -7,11 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.Serializable;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode
+
 @Entity
 @Table(name = "tb_login")
 public class LoginEntity implements Serializable {
@@ -42,6 +38,30 @@ public class LoginEntity implements Serializable {
 
     public String getSenha() {
         return senha;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public long getPessoaId() {
+        return pessoaId;
+    }
+
+    public void setPessoaId(long pessoaId) {
+        this.pessoaId = pessoaId;
+    }
+
+    public String getPerfis() {
+        return perfis;
+    }
+
+    public void setPerfis(String perfis) {
+        this.perfis = perfis;
     }
 
     public void setSenha(String senha) {
