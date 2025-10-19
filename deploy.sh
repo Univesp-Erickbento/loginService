@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Variáveis de configuração
-SERVICE_NAME="bmt-cadastro-de-pessoas"
+SERVICE_NAME="bmt-login-service"
 DOCKER_NETWORK="bmt-rede-docker"  # Certificando que o nome da rede está correto (minúsculo)
 CONTAINER_IP="172.18.0.91"         # Definindo o IP fixo
 
