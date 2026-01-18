@@ -1,5 +1,5 @@
-# Usar a imagem oficial do OpenJDK 17 como base
-FROM openjdk:17-jdk-slim as build
+# Usar a imagem oficial Eclipse Temurin (Java 17)
+FROM eclipse-temurin:17-jre-jammy
 
 # Definir o diretório de trabalho
 WORKDIR /app
@@ -11,4 +11,4 @@ COPY target/*.jar app.jar
 EXPOSE 9001
 
 # Comando para rodar a aplicação
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
