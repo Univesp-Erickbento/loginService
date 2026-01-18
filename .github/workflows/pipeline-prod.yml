@@ -93,5 +93,5 @@ jobs:
             sudo docker run -d --name servico-de-login \
               --label project=servico-de-login \
               --network bmt-rede-docker \
-              -p 9090:9090 \
+              -p 9001:9001 \
               torresbento/bmt-servico-de-login:${{ steps.project_version.outputs.version }}
