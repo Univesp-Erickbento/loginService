@@ -39,24 +39,13 @@ jobs:
       - name: 📤 Push para Docker Hub
         run: docker push torresbento/bmt-servico-de-login:${{ steps.project_version.outputs.version }}
 
-      - name: 🚀 Verificar segredo REMOTE_HOST
-        id: check_remote_host
-        run: |
-          if [ -z "${{ secrets.REMOTE_HOST }}" ]; then
-            echo "ERROR: REMOTE_HOST not set!"
-            exit 1
-          else
-            echo "REMOTE_HOST is set to ${REMOTE_HOST}"
-          fi
-
-      - name: 🚀 Deploy no servidor via SSH
-        if: success()
+      - name: 🚀 Deploy no servidor via SSH (Key Pair)
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          port: ${{ secrets.REMOTE_PORT }}  # se não for 22, senão pode remover
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.REMOTE_PORT }}
           script: |
             echo "⛔ Parando container antigo (se existir)..."
             sudo docker stop servico-de-login || true
@@ -64,32 +53,18 @@ jobs:
             echo "🗑️ Removendo container antigo (se existir)..."
             sudo docker rm servico-de-login || true
 
-            echo "🧹 Removendo imagem antiga (se existir)..."
-            sudo docker image prune -a -f --filter "label=project=servico-de-login" || true
+            echo "🧹 Removendo imagens antigas não utilizadas..."
+            sudo docker image prune -f
 
             echo "⬇️ Baixando nova imagem..."
             sudo docker pull torresbento/bmt-servico-de-login:${{ steps.project_version.outputs.version }}
 
-            echo "🌐 Garantindo que a rede Docker personalizada exista com o subnet correto..."
-            # Verificando se a rede bmt-rede-docker existe e se tem o subnet correto
-            if sudo docker network inspect bmt-rede-docker > /dev/null 2>&1; then
-              # Se a rede já existir, verifique o subnet
-              echo "Rede bmt-rede-docker já existe. Verificando subnet..."
-              if ! sudo docker network inspect tbmt-rede-docker | grep -q '"Subnet": "172.18.0.0/16"'; then
-                echo "A rede bmt-rede-docker não tem o subnet correto. Removendo e recriando..."
-                sudo docker network rm bmt-rede-docker || true
-                sudo docker network create --driver bridge --subnet 172.18.0.0/16 bmt-rede-docker
-              else
-                echo "Rede bmt-rede-docker já existe com o subnet correto."
-              fi
-            else
-              # Se a rede não existir, cria uma nova rede com o subnet correto
-              echo "Rede bmt-rede-docker não encontrada. Criando nova rede..."
+            echo "🌐 Garantindo que a rede Docker exista..."
+            if ! sudo docker network inspect bmt-rede-docker > /dev/null 2>&1; then
               sudo docker network create --driver bridge --subnet 172.18.0.0/16 bmt-rede-docker
             fi
 
             echo "🏃 Subindo novo container..."
-            # Removemos a atribuição do IP fixo, deixando o Docker atribuir automaticamente
             sudo docker run -d --name servico-de-login \
               --label project=servico-de-login \
               --network bmt-rede-docker \
