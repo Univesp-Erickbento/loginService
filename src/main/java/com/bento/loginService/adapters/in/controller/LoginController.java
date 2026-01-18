@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = {"http://45.93.100.30:4200", "http://192.168.15.2:4200", "http://192.168.15.200:4200", "http://localhost:4200"})
+@CrossOrigin(origins = {"http://18.215.173.41:4200", "http://192.168.15.2:4200", "http://192.168.15.200:4200", "http://localhost:4200"})
 public class LoginController {
 
     private final LoginServiceImpl loginServiceImpl;
