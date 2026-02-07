@@ -40,56 +40,118 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // 👈 Ativa CORS com config customizada
+                // 🔹 CORS precisa estar AQUI quando usa Spring Security
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
+                // 🔹 API stateless com JWT
                 .csrf(csrf -> csrf.disable())
+
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()  // 👈 Libera preflight requests
+                        // 🔹 Preflight (OPTIONS)
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // 🔹 Endpoints públicos
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll() // liberar swagger
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .anyRequest().authenticated())
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+                        // 🔹 Swagger
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
+
+                        // 🔹 Demais endpoints protegidos
+                        .anyRequest().authenticated()
+                )
+
+                // 🔹 Resource Server com JWT
+                .oauth2ResourceServer(oauth2 ->
+                        oauth2.jwt(Customizer.withDefaults())
+                );
 
         return http.build();
     }
 
+    /**
+     * Configuração CORS correta para Angular + JWT
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
         CorsConfiguration config = new CorsConfiguration();
+
+        // 🔹 Origens permitidas
         config.setAllowedOrigins(List.of(
                 "http://localhost:4200",
                 "http://45.93.100.30:4200",
                 "http://192.168.15.2:4200",
-                "http://192.168.15.200:4200"
-        )); // 👈 Lista de origens permitidas
+                "http://192.168.15.200:4200",
+                "http://3.89.127.254:4200"
+        ));
 
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
+        // 🔹 Métodos HTTP
+        config.setAllowedMethods(List.of(
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE",
+                "OPTIONS"
+        ));
+
+        // 🔹 Headers que o Angular envia
+        config.setAllowedHeaders(List.of(
+                "Authorization",
+                "Content-Type",
+                "Accept"
+        ));
+
+        // 🔹 Headers que o Angular pode LER
+        config.setExposedHeaders(List.of(
+                "Authorization"
+        ));
+
+        // 🔹 Necessário quando usa Authorization header
         config.setAllowCredentials(true);
-        config.setMaxAge(3600L); // 1 hora de cache do preflight no navegador
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // 🔹 Cache do preflight (1 hora)
+        config.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+
         source.registerCorsConfiguration("/**", config);
         return source;
     }
 
+    // 🔹 JWT Decoder (validação do token)
     @Bean
     public JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withPublicKey(publicKey).build();
     }
 
+    // 🔹 JWT Encoder (geração do token)
     @Bean
     public JwtEncoder jwtEncoder() {
-        JWK jwk = new RSAKey.Builder(publicKey).privateKey(privateKey).build();
-        return new NimbusJwtEncoder(new ImmutableJWKSet<>(new JWKSet(jwk)));
+        JWK jwk = new RSAKey
+                .Builder(publicKey)
+                .privateKey(privateKey)
+                .build();
+
+        return new NimbusJwtEncoder(
+                new ImmutableJWKSet<>(new JWKSet(jwk))
+        );
     }
 
+    // 🔹 Encoder de senha
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
